@@ -1,0 +1,11 @@
+[package]
+name = "newton"
+version = "0.1.0"
+edition = "2021"
+authors = ["Alexander Heuwes <alexander@tesserakt.pro>"]
+
+[dependencies]
+dotenv = "0.15.0"
+rand = "0.8.5"
+serenity = "0.12.1"
+tokio = { version = "1.37.0", features = ["macros", "rt-multi-thread"] }
