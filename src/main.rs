@@ -22,8 +22,14 @@ async fn get_ip() -> String {
     let mut threadrng = rand::thread_rng();
     let random_index = threadrng.gen_range(0..ip_hosts.len());
 
-    match Command::new("curl").args([ip_hosts[random_index]]).output() {
-        Ok(output) => output.stdout.iter().map(|&x| x as char).collect::<String>(),
+    let element = ip_hosts[random_index];
+    print!("Fetching {element}...");
+    match Command::new("curl").args([element]).output() {
+        Ok(output) => {
+            let output = output.stdout.iter().map(|&x| x as char).collect::<String>();
+            println!(" {output}");
+            output
+        }
         Err(e) => format!("Error: {e}"),
     }
 }
@@ -45,7 +51,7 @@ impl EventHandler for Handler {
             let ip = get_ip().await;
 
             match msg.channel_id.say(&ctx.http, format!("{}:25565", ip)).await {
-                Ok(_) => println!("Successfully sent message"),
+                Ok(_) => (),
                 Err(e) => println!("Error sending message: {e:?}"),
             }
         }
@@ -63,10 +69,9 @@ impl EventHandler for Handler {
 
 #[tokio::main]
 async fn main() {
-    dotenv().expect("Failed to read .env file");
+    dotenv().ok();
 
     let token = env::var("DISCORD_TOKEN").expect("Discord token is not set.");
-    let _config = env::var("CONFIG_PATH").expect("Config path is not set.");
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
